@@ -4,8 +4,10 @@ WORKDIR /app-backend
 
 EXPOSE 3001
 
-COPY . /app-backend
+COPY package.json .
 
 RUN npm install
+
+COPY . .
 
 CMD ["npm", "run", "dev"]
