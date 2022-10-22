@@ -14,7 +14,6 @@ const validateBody = (
   const loginBody = req.body;
   try {
     const { error } = loginSchema.valid(loginBody);
-    console.log(loginBody, error);
     if (error) {
       next(error);
     }
