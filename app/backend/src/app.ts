@@ -1,4 +1,5 @@
 import * as express from 'express';
+import middleError from './middlewares/middleError';
 
 class App {
   public app: express.Express;
@@ -8,8 +9,12 @@ class App {
 
     this.config();
 
+    // this.routes();
+
     // Não remover essa rota
     this.app.get('/', (req, res) => res.json({ ok: true }));
+
+    this.app.use(middleError); // tem que ser o último (middleWare de Erro)
   }
 
   private config():void {
@@ -23,6 +28,10 @@ class App {
     this.app.use(express.json());
     this.app.use(accessControl);
   }
+
+  // private routes(): void {
+  //   this.app.use(loginRouter);
+  // }
 
   public start(PORT: string | number):void {
     this.app.listen(PORT, () => console.log(`Running on port ${PORT}`));

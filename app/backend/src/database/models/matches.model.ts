@@ -1,15 +1,17 @@
 import { Model, STRING, INTEGER } from 'sequelize';
 import db from '.';
+import Teams from './teams.model';
 
-class User extends Model {
+class Matches extends Model {
   id!: number;
-  email!: string;
-  username!: string;
-  password!: string;
-  role!: string;
+  homeTeam!: number;
+  homeTeamGoals!: number;
+  awayTeam!: number;
+  awayTeamGoals!: number;
+  inProgress!: number;
 }
 
-User.init(
+Matches.init(
   {
     id: {
       type: INTEGER,
@@ -17,19 +19,23 @@ User.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    email: {
+    homeTeam: {
       type: STRING,
       allowNull: false,
     },
-    name: {
+    homeTeamGoals: {
       type: STRING,
       allowNull: false,
     },
-    password: {
+    awayTeam: {
       type: STRING,
       allowNull: false,
     },
-    role: {
+    awayTeamGoals: {
+      type: STRING,
+      allowNull: false,
+    },
+    inProgress: {
       type: STRING,
       allowNull: false,
     },
@@ -37,10 +43,13 @@ User.init(
   {
     underscored: true,
     sequelize: db,
-    modelName: 'users',
+    modelName: 'matches',
     timestamps: false,
   },
 );
+
+Matches.belongsTo(Teams, { foreignKey: 'home_team', as: 'id' });
+Matches.belongsTo(Teams, { foreignKey: 'away_team', as: 'id' });
 
 /**
  * `Workaround` para aplicar as associations em TS:
@@ -53,4 +62,4 @@ User.init(
 // User.hasMany(OtherModel, { foreignKey: 'campoC', as: 'campoEstrangeiroC' });
 // User.hasMany(OtherModel, { foreignKey: 'campoD', as: 'campoEstrangeiroD' });
 
-export default User;
+export default Matches;
