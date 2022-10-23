@@ -15,8 +15,8 @@ export default class UserController {
     next: NextFunction,
   ): Promise<Response | void> => {
     try {
-      const userCredentials: UserInterface = req.body;
-      const token = await this.userService.login(userCredentials);
+      const userInterface: UserInterface = req.body;
+      const token = await this.userService.login(userInterface);
       if (!token) {
         return res
           .status(401)
