@@ -9,10 +9,19 @@ export default class UserController {
     this.userService = new UserService();
   }
 
-  public login = async (req: Request, res: Response, next: NextFunction) => {
+  public login = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response | void> => {
     try {
-      const user: UserInterface = req.body;
-      const token = await this.userService.login(user);
+      const userCredentials: UserInterface = req.body;
+      const token = await this.userService.login(userCredentials);
+      if (!token) {
+        return res
+          .status(401)
+          .json({ message: 'Incorrect email or password' });
+      }
       return res.status(200).json({ token });
     } catch (error) {
       next(error);
