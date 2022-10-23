@@ -4,7 +4,6 @@ import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 
 import { app } from '../app';
-import User from '../database/models/user.model';
 
 import { Response } from 'superagent';
 
@@ -17,12 +16,15 @@ describe('Testa APP', () => {
     const httpResponseLogin = await chai
       .request(app)
       .post('/login')
-      .send({ email: 'thalesferreira@gmail.com', password: '1234567' });
+      .send({
+        email: 'admin@admin.com',
+        password:
+          '$2a$08$xi.Hxk1czAO0nZR..B393u10aED0RQ1N3PAEXQ7HxtLjKPEZBu.PW',
+      });
 
     expect(httpResponseLogin.status).to.equal(200);
-    expect(httpResponseLogin.body).to.deep.equal({
-      token:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjU0NTI3MTg5fQ.XS_9AA82iNoiVaASi0NtJpqOQ_gHSHhxrpIdigiT-fc',
-    });
+    expect(httpResponseLogin.body.token.split('E2NjY0')[0]).to.equal(
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsInVzZXJuYW1lIjoiQWRtaW4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOj'
+    );
   });
 });
