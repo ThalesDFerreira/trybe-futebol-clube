@@ -8,4 +8,10 @@ const secret: jwt.Secret = process.env.JWT_SECRET
   ? process.env.JWT_SECRET
   : '1234567';
 
-export default (payload: string | ILoginBody) => jwt.sign(payload, secret);
+export default (token: string): ILoginBody | null => {
+  try {
+    return jwt.verify(token, secret) as ILoginBody;
+  } catch (error) {
+    return null;
+  }
+};

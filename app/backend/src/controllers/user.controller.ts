@@ -1,30 +1,28 @@
-import { NextFunction, Request, Response } from 'express';
-import UserService from '../services/user.service';
-import { UserInterface } from '../interface/user';
+import { Request, Response } from 'express';
+import generateToken from '../utils/generateJWT';
+import ILoginService from '../interface/classes/ILoginService';
+import LoginService from '../services/user.service';
+import ILoginBody from '../interface/requests/ILoginBody';
 
-export default class UserController {
-  private userService: UserService;
+export default class LoginController {
+  constructor(private _service: ILoginService = new LoginService()) {}
 
-  constructor() {
-    this.userService = new UserService();
-  }
-
-  public login = async (
-    req: Request,
+  public findUser = async (
+    req: Request<unknown, unknown, ILoginBody>,
     res: Response,
-    next: NextFunction,
-  ): Promise<Response | void> => {
-    try {
-      const userInterface: UserInterface = req.body;
-      const token = await this.userService.login(userInterface);
-      if (!token) {
-        return res
-          .status(401)
-          .json({ message: 'Incorrect email or password' });
-      }
+  ) => {
+    const searchResult = await this._service.findUser(req.body);
+
+    if (searchResult) {
+      const token = generateToken(req.body);
       return res.status(200).json({ token });
-    } catch (error) {
-      next(error);
     }
+
+    res.status(401).json({ message: 'Incorrect email or password' });
+  };
+
+  public findUserRole = async (req: Request, res: Response) => {
+    const role = await this._service.findUserRole(req.body.decoded);
+    res.status(200).json({ role });
   };
 }

@@ -1,6 +1,6 @@
 import * as express from 'express';
 import middleError from './middlewares/middleError';
-import loginRouter from './routes';
+import loginRouter from './routes/login.router';
 
 class App {
   public app: express.Express;

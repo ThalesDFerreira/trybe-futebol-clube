@@ -1,10 +1,13 @@
 import * as express from 'express';
-import UserController from '../controllers/user.controller';
-import validateLogin from '../middlewares/validateLogin';
+import loginMiddleware from '../middlewares/loginMiddle';
+import LoginController from '../controllers/user.controller';
+import verifyToken from '../middlewares/validateToken';
 
-const router = express.Router();
-const userController = new UserController();
+const LoginRouter = express.Router();
 
-router.post('/login', validateLogin, userController.login);
+const controller = new LoginController();
 
-export default router;
+LoginRouter.post('/', loginMiddleware, controller.findUser);
+LoginRouter.get('/validate', verifyToken, controller.findUserRole);
+
+export default LoginRouter;
