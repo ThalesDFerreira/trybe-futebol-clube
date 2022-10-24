@@ -1,33 +1,34 @@
-import { Model, STRING, INTEGER } from 'sequelize';
+import { INTEGER, STRING, Model } from 'sequelize';
 import db from '.';
-// import Matches from './matches.model';
+import MatchModel from './matches.model';
 
-class Teams extends Model {
+class TeamModel extends Model {
   id!: number;
   teamName!: string;
 }
 
-Teams.init(
-  {
-    id: {
-      type: INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    teamName: {
-      type: STRING,
-      allowNull: false,
-    },
+TeamModel.init({
+  id: {
+    type: INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
   },
-  {
-    underscored: true,
-    sequelize: db,
-    modelName: 'teams',
-    timestamps: false,
+  teamName: {
+    type: STRING(100),
+    allowNull: false,
   },
-);
+}, {
+  underscored: true,
+  sequelize: db,
+  modelName: 'teams',
+  timestamps: false,
+});
 
-// Teams.hasMany(Matches, { foreignKey: 'campoC', as: 'campoEstrangeiroC' });
+MatchModel.belongsTo(TeamModel, { foreignKey: 'homeTeam', as: 'home' });
+MatchModel.belongsTo(TeamModel, { foreignKey: 'awayTeam', as: 'away' });
 
-export default Teams;
+TeamModel.hasMany(MatchModel, { foreignKey: 'id', as: 'home' });
+TeamModel.hasMany(MatchModel, { foreignKey: 'id', as: 'away' });
+
+export default TeamModel;

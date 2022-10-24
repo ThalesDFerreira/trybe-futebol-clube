@@ -1,5 +1,4 @@
 import * as express from 'express';
-import middleError from './middlewares/middleError';
 import loginRouter from './routes/login.router';
 
 class App {
@@ -9,13 +8,10 @@ class App {
     this.app = express();
 
     this.config();
-
     this.routes();
 
     // Não remover essa rota
     this.app.get('/', (req, res) => res.json({ ok: true }));
-
-    this.app.use(middleError); // tem que ser o último (middleWare de Erro)
   }
 
   private config():void {
@@ -30,7 +26,7 @@ class App {
     this.app.use(accessControl);
   }
 
-  private routes(): void {
+  private routes():void {
     this.app.use(loginRouter);
   }
 

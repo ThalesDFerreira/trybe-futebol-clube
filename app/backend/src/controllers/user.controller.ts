@@ -1,28 +1,29 @@
-import { Request, Response } from 'express';
-import generateToken from '../utils/generateJWT';
-import ILoginService from '../interface/classes/ILoginService';
+import * as bcrypt from 'bcryptjs';
 import LoginService from '../services/user.service';
-import ILoginBody from '../interface/requests/ILoginBody';
+import { ILogin, ILoginService } from '../interfaces/interfaces';
+import * as jwtFunction from '../utils/jwt-function';
 
 export default class LoginController {
-  constructor(private _service: ILoginService = new LoginService()) {}
+  constructor(private _loginService: ILoginService = new LoginService()) {
+  }
 
-  public findUser = async (
-    req: Request<unknown, unknown, ILoginBody>,
-    res: Response,
-  ) => {
-    const searchResult = await this._service.findUser(req.body);
-
-    if (searchResult) {
-      const token = generateToken(req.body);
-      return res.status(200).json({ token });
+  validateUser = async (user: ILogin) => {
+    const result = await this._loginService.validateUser(user);
+    let decodedPassword = false;
+    if (result[0]) {
+      decodedPassword = bcrypt.compareSync(user.password, result[0].password);
     }
 
-    res.status(401).json({ message: 'Incorrect email or password' });
+    if (decodedPassword) {
+      const token = jwtFunction.genetareToken(user);
+      return { token };
+    }
+
+    return { message: 'Incorrect email or password' };
   };
 
-  public findUserRole = async (req: Request, res: Response) => {
-    const role = await this._service.findUserRole(req.body.decoded);
-    res.status(200).json({ role });
+  findUser = async (user: ILogin): Promise<string | undefined> => {
+    const result = await this._loginService.validateUser(user);
+    return result[0].role;
   };
 }

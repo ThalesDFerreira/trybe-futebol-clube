@@ -1,31 +1,15 @@
-import * as bcrypt from 'bcryptjs';
-import ILoginService from '../interface/classes/ILoginService';
+// import * as bcrypt from 'bcryptjs';
 import UserModel from '../database/models/user.model';
-import ILoginBody from '../interface/requests/ILoginBody';
+import { ILogin, ILoginService } from '../interfaces/interfaces';
 
 export default class LoginService implements ILoginService {
-  private _model = UserModel;
-
-  public findUser = async (info: ILoginBody): Promise<boolean> => {
-    const search = await this._model.findOne({
-      where: { email: info.email },
+  validateUser = async (user: ILogin): Promise<ILogin[]> => {
+    const userModel = UserModel;
+    const userLogin = await userModel.findAll({
+      where: {
+        email: user.email,
+      },
     });
-
-    if (!search) {
-      return false;
-    }
-
-    const isEqual = bcrypt.compareSync(info.password, search.password);
-    return isEqual;
-  };
-
-  public findUserRole = async (decoded: ILoginBody): Promise<string> => {
-    const userInfo = await this._model.findOne({
-      where: { email: decoded.email },
-    });
-
-    if (!userInfo) return 'user';
-
-    return userInfo.role;
+    return userLogin;
   };
 }
