@@ -4,8 +4,7 @@ import { ILogin, ILoginService } from '../interfaces/interfaces';
 import * as jwtFunction from '../utils/jwt-function';
 
 export default class LoginController {
-  constructor(private _loginService: ILoginService = new LoginService()) {
-  }
+  constructor(private _loginService: ILoginService = new LoginService()) {}
 
   validateUser = async (user: ILogin) => {
     const result = await this._loginService.validateUser(user);
