@@ -3,9 +3,9 @@ import TeamController from '../controllers/teams.controller';
 
 const TeamsRouter = express.Router();
 
-const controller = new TeamController();
+const teamsController = new TeamController();
 
-TeamsRouter.get('/', controller.getAllTeams);
-TeamsRouter.get('/:id', controller.getTeamById);
+TeamsRouter.get('/', teamsController.getAllTeams);
+TeamsRouter.get('/:id', teamsController.getTeamById);
 
 export default TeamsRouter;
