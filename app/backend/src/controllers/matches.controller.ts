@@ -10,17 +10,30 @@ export default class MatchesController {
   public getAllMatches = async (req: Request, res: Response) => {
     let matches;
 
-    if (Object.keys(req.query).length > 0) {
-      if (req.query.inProgress === 'true') {
-        matches = await this._matchesService.getMatchesInProgress();
-        // return res.status(200).json(getMatchesInProgress);
-      } else {
-        matches = await this._matchesService.getMatchesFinished();
-        // return res.status(200).json(getMatchesFinished);
-      }
-    } else {
+    if (!req.query) {
       matches = await this._matchesService.getAllMatches();
+    } else {
+      const { inProgress } = req.query;
+      const query = { ...req.query };
+      if (inProgress) query.inProgress = JSON.parse(inProgress as string);
+      matches = await this._matchesService.getFind(query);
     }
+
     res.status(200).json(matches);
+  };
+
+  insertMatch = async (req: Request, res: Response) => {
+    const result = await this._matchesService.insertMatch(req.body);
+    res.status(201).json(result);
+  };
+
+  finishMatch = async (req: Request, res: Response) => {
+    const update = await this._matchesService.finishMatch(req.params.id);
+    if (update) res.status(200).json({ message: 'Finished' });
+  };
+
+  updateMatch = async (req: Request, res: Response) => {
+    const update = await this._matchesService.updateMatch(req.body, req.params.id);
+    if (update) res.status(200).json({ ...req.body });
   };
 }

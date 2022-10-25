@@ -1,3 +1,5 @@
+import MatchModel from '../database/models/matches.model';
+
 export interface ILogin {
   email: string;
   password: string;
@@ -9,8 +11,8 @@ export interface ILoginService {
 }
 
 export interface ITeams {
-  id: number;
-  teamName: string;
+  id?: number;
+  teamName?: string;
 }
 
 export interface ITeamService {
@@ -19,16 +21,18 @@ export interface ITeamService {
 }
 
 export interface IMatches {
-  id: number;
-  homeTeam: number;
-  homeTeamGoals: number;
-  awayTeam: number;
-  awayTeamGoals: number;
-  inProgress: boolean;
+  id?: string,
+  homeTeam?: string,
+  homeTeamGoals?: string,
+  awayTeam?: string,
+  awayTeamGoals?: string,
+  inProgress?: string,
 }
 
 export interface IMatchesService {
-  getAllMatches(): Promise<IMatches[]>;
-  getMatchesInProgress(): Promise<IMatches[]>;
-  getMatchesFinished(): Promise<IMatches[]>;
+  getAllMatches(): Promise<MatchModel[]>,
+  getFind(info: object): Promise<MatchModel[]>,
+  insertMatch(info: object): Promise<MatchModel>,
+  finishMatch(id: string): Promise<boolean>,
+  updateMatch(info: SVGForeignObjectElement, id: string): Promise<boolean>,
 }
