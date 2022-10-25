@@ -1,69 +1,93 @@
 import * as sinon from 'sinon';
 import * as chai from 'chai';
-import { app } from '../app';
 // @ts-ignore
-import chaiHttp = require('chai-http');
+import chaiHttp from 'chai-http';
+import { app } from '../app';
+import { Response } from 'superagent';
+import UserModel from '../database/models/user.model';
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('Teste rota Login', () => {
-  describe('Método Post', () => {
-    it('Se correto, retorna Status 200 e Token', async () => {
-      const httpResponse = await chai.request(app).post('/login').send({
-        email: 'user@user.com',
-        password: 'secret_user',
+const modelResponseMock = {
+  password: '$2a$08$Y8Abi8jXvsXyqm.rmp0B.uQBA5qUz7T6Ghlg/CvVr/gLxYj5UAZVO',
+  email: 'user@user.com',
+};
+
+const wrongRequest = {
+  email: 'email@email.com',
+  password: 'swrogPass',
+};
+
+describe('Teste rota Login ', () => {
+  let chaiHttpResponse: Response;
+
+  beforeEach(() =>
+    sinon.stub(UserModel, 'findOne').resolves(modelResponseMock as UserModel)
+  );
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it('Verifica se recebemos um token ao usar e-mail e senha corretos', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send(modelResponseMock);
+
+    expect(chaiHttpResponse.status).to.be.equal(200);
+    expect(chaiHttpResponse.body).to.haveOwnProperty('token');
+  });
+
+  it('Verifica se recebemos um erro ao usar e-mail/senha incorretos', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({
+        email: wrongRequest.email,
+        password: modelResponseMock.password,
       });
 
-      expect(httpResponse.status).to.equal(200);
-      expect(httpResponse.body).to.haveOwnProperty('token');
+    expect(chaiHttpResponse.status).to.be.equal(401);
+    expect(chaiHttpResponse.body).to.deep.equal({
+      message: 'Incorrect email or password',
     });
 
-    it('Se não passar o email, retorna Status 400 e mensagem "All fields must be filled"', async () => {
-      const httpResponse = await chai.request(app).post('/login').send({
-        password: 'senha_qualquer',
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({
+        email: modelResponseMock.email,
+        password: wrongRequest.password,
       });
 
-      expect(httpResponse.status).to.be.equal(400);
-      expect(httpResponse.body).to.deep.equal({
-        message: 'All fields must be filled',
-      });
+    expect(chaiHttpResponse.status).to.be.equal(401);
+    expect(chaiHttpResponse.body).to.deep.equal({
+      message: 'Incorrect email or password',
+    });
+  });
+
+  it('Verifica se recebemos um erro ao nao passar um e-mail e senha', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ password: modelResponseMock.password });
+
+    expect(chaiHttpResponse.status).to.be.equal(404);
+    expect(chaiHttpResponse.body).to.deep.equal({
+      message: 'All fields must be filled',
     });
 
-    it('Se não passar o password, retorna Status 400 e mensagem "All fields must be filled"', async () => {
-      const httpResponse = await chai.request(app).post('/login').send({
-        email: 'email_qualquer',
-      });
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ email: modelResponseMock.email });
 
-      expect(httpResponse.status).to.be.equal(400);
-      expect(httpResponse.body).to.deep.equal({
-        message: 'All fields must be filled',
-      });
-    });
-
-    it('Se email incorreto, retorna Status 401 e mensagem "Incorrect email or password"', async () => {
-      const httpResponse = await chai.request(app).post('/login').send({
-        email: 'usererrado@user.com',
-        password: 'secret_user',
-      });
-
-      expect(httpResponse.status).to.equal(401);
-      expect(httpResponse.body).to.deep.equal({
-        message: 'Incorrect email or password',
-      });
-    });
-
-    it('Se password incorreto, retorna Status 401 e mensagem "Incorrect email or password"', async () => {
-      const httpResponse = await chai.request(app).post('/login').send({
-        email: 'user@user.com',
-        password: 'secret_user_errado',
-      });
-
-      expect(httpResponse.status).to.equal(401);
-      expect(httpResponse.body).to.deep.equal({
-        message: 'Incorrect email or password',
-      });
+    expect(chaiHttpResponse.status).to.be.equal(404);
+    expect(chaiHttpResponse.body).to.deep.equal({
+      message: 'All fields must be filled',
     });
   });
 });
