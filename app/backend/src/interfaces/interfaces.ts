@@ -42,3 +42,23 @@ export interface IMatchesService {
   finishMatch(id: string): Promise<boolean>;
   updateMatch(info: SVGForeignObjectElement, id: string): Promise<boolean>;
 }
+
+export interface ILeaderboardTeam {
+  id: number;
+  teamName: string;
+  homeTeam?: IMatches[];
+  awayTeam?: IMatches[];
+}
+
+export interface ILBformat {
+  name: string;
+  totalPoints: number;
+  totalGames: number;
+  totalVictories: number;
+  totalDraws: number;
+  totalLosses: number;
+  goalsFavor: number;
+  goalsOwn: number;
+  goalsBalance: number;
+  efficiency: number;
+}
