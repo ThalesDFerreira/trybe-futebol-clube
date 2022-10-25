@@ -6,7 +6,7 @@ import * as jwtFunction from '../utils/jwt-function';
 export default class LoginController {
   constructor(private _loginService: ILoginService = new LoginService()) {}
 
-  validateUser = async (user: ILogin) => {
+  public validateUser = async (user: ILogin) => {
     const result = await this._loginService.validateUser(user);
     let decodedPassword = false;
     if (result[0]) {
@@ -21,7 +21,7 @@ export default class LoginController {
     return { message: 'Incorrect email or password' };
   };
 
-  findUser = async (user: ILogin): Promise<string | undefined> => {
+  public findUser = async (user: ILogin): Promise<string | undefined> => {
     const result = await this._loginService.validateUser(user);
     return result[0].role;
   };

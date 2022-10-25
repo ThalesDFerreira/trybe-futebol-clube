@@ -22,17 +22,17 @@ export default class MatchesController {
     res.status(200).json(matches);
   };
 
-  insertMatch = async (req: Request, res: Response) => {
+  public insertMatch = async (req: Request, res: Response) => {
     const result = await this._matchesService.insertMatch(req.body);
     res.status(201).json(result);
   };
 
-  finishMatch = async (req: Request, res: Response) => {
+  public finishMatch = async (req: Request, res: Response) => {
     const update = await this._matchesService.finishMatch(req.params.id);
     if (update) res.status(200).json({ message: 'Finished' });
   };
 
-  updateMatch = async (req: Request, res: Response) => {
+  public updateMatch = async (req: Request, res: Response) => {
     const update = await this._matchesService.updateMatch(req.body, req.params.id);
     if (update) res.status(200).json({ ...req.body });
   };
