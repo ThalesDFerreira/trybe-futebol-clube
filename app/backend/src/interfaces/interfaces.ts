@@ -21,18 +21,24 @@ export interface ITeamService {
 }
 
 export interface IMatches {
-  id?: string,
-  homeTeam?: string,
-  homeTeamGoals?: string,
-  awayTeam?: string,
-  awayTeamGoals?: string,
-  inProgress?: string,
+  id?: number;
+  homeTeam: number;
+  homeTeamGoals: number;
+  awayTeam: number;
+  awayTeamGoals: number;
+  inProgress?: boolean;
+  teamHome?: {
+    teamName: string;
+  };
+  teamAway?: {
+    teamName: string;
+  };
 }
 
 export interface IMatchesService {
-  getAllMatches(): Promise<MatchModel[]>,
-  getFind(info: object): Promise<MatchModel[]>,
-  insertMatch(info: object): Promise<MatchModel>,
-  finishMatch(id: string): Promise<boolean>,
-  updateMatch(info: SVGForeignObjectElement, id: string): Promise<boolean>,
+  getAllMatches(): Promise<MatchModel[]>;
+  getFind(info: object): Promise<MatchModel[]>;
+  insertMatch(info: object): Promise<MatchModel>;
+  finishMatch(id: string): Promise<boolean>;
+  updateMatch(info: SVGForeignObjectElement, id: string): Promise<boolean>;
 }
