@@ -8,4 +8,18 @@ export default class MatchesService implements IMatchesService {
     const matches = await this._model.findAll();
     return matches;
   };
+
+  public getMatchesInProgress = async (): Promise<IMatches[]> => {
+    const matches = await this._model.findAll({
+      where: { inProgress: true },
+    });
+    return matches;
+  };
+
+  public getMatchesFinished = async (): Promise<IMatches[]> => {
+    const matches = await this._model.findAll({
+      where: { inProgress: false },
+    });
+    return matches;
+  };
 }

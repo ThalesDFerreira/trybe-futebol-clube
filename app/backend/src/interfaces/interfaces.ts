@@ -29,4 +29,6 @@ export interface IMatches {
 
 export interface IMatchesService {
   getAllMatches(): Promise<IMatches[]>;
+  getMatchesInProgress(): Promise<IMatches[]>;
+  getMatchesFinished(): Promise<IMatches[]>;
 }
